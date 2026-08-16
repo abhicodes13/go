@@ -1,21 +1,30 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"task-api/internal/database"
 	"task-api/internal/handlers"
 )
 
 func main() {
-    router := http.NewServeMux()
+    db, err := database.Connect()
+	if err != nil {
+		fmt.Println("Database connection failed:", err)
+		return
+	}
 
-    router.HandleFunc("/health", handlers.Health)
+	defer db.Close(context.Background())
 
-    fmt.Println("server running on :8080")
+	http.HandleFunc("/health", handlers.Health)
+    http.Handle("/tasks", handlers.Tasks(db))
 
-    err := http.ListenAndServe(":8080", router)
 
-    if err != nil {
-        fmt.Println(err)
-    }
+	fmt.Println("Server running on :8080")
+
+	err = http.ListenAndServe(":8080", nil)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
