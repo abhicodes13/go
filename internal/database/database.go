@@ -9,10 +9,8 @@ import (
 )
 
 func Connect() (*pgx.Conn, error) {
-	err := godotenv.Load()
-	if err != nil {
-		return nil, err
-	}
+  godotenv.Load()
+	
 
 	databaseURL := os.Getenv("DATABASE_URL")
 
