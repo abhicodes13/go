@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"os"
 	"task-api/internal/database"
 	"task-api/internal/handlers"
 )
@@ -21,9 +22,12 @@ func main() {
     http.Handle("/tasks", handlers.Tasks(db))
 
 
-	fmt.Println("Server running on :8080")
+	port := os.Getenv("PORT")
+    if port == ""{
+        port = "8080"
+    }
 
-	err = http.ListenAndServe(":8080", nil)
+	err = http.ListenAndServe(":"+port, nil)
 	if err != nil {
 		fmt.Println(err)
 	}
